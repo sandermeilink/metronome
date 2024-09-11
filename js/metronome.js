@@ -56,10 +56,6 @@ window.onload = (event) => {
 
     // Initialize Web Audio API
     function initAudio() {
-        if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        
         if (audioContext.state === 'suspended') {
             audioContext.resume();
         }
@@ -120,8 +116,11 @@ window.onload = (event) => {
     }
 
     function toggleMetronome() {
-        initAudio();
-        
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            initAudio();
+        }
+
         if (isPlaying) {
             stopMetronome();
         } else {
