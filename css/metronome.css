@@ -97,6 +97,11 @@
             cursor: pointer;
             margin-bottom: 20px;
             margin-right: 10px;
+
+            /* prevent ugly outline on mobile */
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0) !important; 
+            -webkit-focus-ring-color: rgba(255, 255, 255, 0) !important; 
+            outline: none !important;
         }
         #tapButton {
             width: 60px;
