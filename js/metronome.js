@@ -60,8 +60,8 @@ window.onload = (event) => {
             audioContext.resume();
         }
 
-        loadSound('../sounds/Perc_MetronomeQuartz_hi.mp3', buffer => tickBuffer = buffer);
-        loadSound('../sounds/Perc_MetronomeQuartz_lo.mp3', buffer => lowerTickBuffer = buffer);
+        loadSound('sounds/Perc_MetronomeQuartz_hi.mp3', buffer => tickBuffer = buffer);
+        loadSound('sounds/Perc_MetronomeQuartz_lo.mp3', buffer => lowerTickBuffer = buffer);
     }
 
     function loadSound(url, callback) {
