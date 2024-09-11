@@ -46,6 +46,42 @@ window.onload = (event) => {
         { name: "Prestissimo", min: 188, max: Infinity }
     ];
 
+
+    /*=========
+    Web Audio API
+    ================*/
+    let audioContext;
+    let tickBuffer;
+    let lowerTickBuffer;
+
+    // Initialize Web Audio API
+    function initAudio() {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        //<audio id="beepSound" preload="auto" src="sounds/Perc_MetronomeQuartz_hi.mp3"></audio>
+        //<audio id="lowerBeepSound" preload="auto" src="sounds/Perc_MetronomeQuartz_lo.mp3"></audio>
+
+        loadSound('../sounds/Perc_MetronomeQuartz_hi.mp3', buffer => tickBuffer = buffer);
+        loadSound('../sounds/Perc_MetronomeQuartz_lo.mp3', buffer => lowerTickBuffer = buffer);
+    }
+
+    function loadSound(url, callback) {
+        fetch(url)
+            .then(response => response.arrayBuffer())
+            .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+            .then(audioBuffer => callback(audioBuffer));
+    }
+
+    function playSound(buffer) {
+        const source = audioContext.createBufferSource();
+        source.buffer = buffer;
+        source.connect(audioContext.destination);
+        source.start(0);
+    }
+
+
+
+
     function getTempoName(bpm) {
         let tempoNames = tempoRanges.filter(tempo => bpm >= tempo.min && bpm <= tempo.max).map(tempo => tempo.name);
         return tempoNames.join(' - ') || 'Unknown';
@@ -90,6 +126,10 @@ window.onload = (event) => {
         isPlaying = true;
         toggleButton.textContent = '⏹';
 
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+
         startBeatInterval();
 
         if (studyMode) {
@@ -116,6 +156,7 @@ window.onload = (event) => {
     function startBeatInterval() {
         clearInterval(intervalId);
         const interval = 60000 / bpm;
+        let nextNotetime = audioContext.currentTime;
         intervalId = setInterval(playBeat, interval);
     }
 
@@ -124,17 +165,21 @@ window.onload = (event) => {
         blocks[currentBeat].classList.add('active');
 
         if (currentBeat === 0) {
-            beepSound.load();
+            /*beepSound.load();
             //beepSound.currentTime = 0;
             beepSound.play();
+            */
+            playSound(tickBuffer);
 
             if (studyMode && nextBpmIncrease !== null && Date.now() >= nextBpmIncrease) {
                 increaseBPM();
             }
         } else {
-            lowerBeepSound.load();
+            /*lowerBeepSound.load();
             //lowerBeepSound.currentTime = 0;
             lowerBeepSound.play();
+            */
+            playSound(lowerTickBuffer);
         }
 
         currentBeat = (currentBeat + 1) % timeSignature;
@@ -234,7 +279,12 @@ window.onload = (event) => {
         }
     });
 
+    // Initialize Audio & Preload
+    initAudio();
+
     // Initialize the metronome
     setTimeSignature(4);
     updateBPM(120);
+
+    
 };
