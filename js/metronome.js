@@ -124,14 +124,16 @@ window.onload = (event) => {
         blocks[currentBeat].classList.add('active');
 
         if (currentBeat === 0) {
-            beepSound.currentTime = 0;
+            beepSound.load();
+            //beepSound.currentTime = 0;
             beepSound.play();
 
             if (studyMode && nextBpmIncrease !== null && Date.now() >= nextBpmIncrease) {
                 increaseBPM();
             }
         } else {
-            lowerBeepSound.currentTime = 0;
+            lowerBeepSound.load();
+            //lowerBeepSound.currentTime = 0;
             lowerBeepSound.play();
         }
 
