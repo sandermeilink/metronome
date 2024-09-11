@@ -56,10 +56,6 @@ window.onload = (event) => {
 
     // Initialize Web Audio API
     function initAudio() {
-        if (audioContext.state === 'suspended') {
-            audioContext.resume();
-        }
-
         loadSound('sounds/Perc_MetronomeQuartz_hi.mp3', buffer => tickBuffer = buffer);
         loadSound('sounds/Perc_MetronomeQuartz_lo.mp3', buffer => lowerTickBuffer = buffer);
     }
@@ -79,9 +75,6 @@ window.onload = (event) => {
             source.start(0);
         }
     }
-
-
-
 
     function getTempoName(bpm) {
         let tempoNames = tempoRanges.filter(tempo => bpm >= tempo.min && bpm <= tempo.max).map(tempo => tempo.name);
@@ -119,6 +112,10 @@ window.onload = (event) => {
         if (!audioContext) {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             initAudio();
+        }
+
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
         }
 
         if (isPlaying) {
