@@ -56,10 +56,13 @@ window.onload = (event) => {
 
     // Initialize Web Audio API
     function initAudio() {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-        //<audio id="beepSound" preload="auto" src="sounds/Perc_MetronomeQuartz_hi.mp3"></audio>
-        //<audio id="lowerBeepSound" preload="auto" src="sounds/Perc_MetronomeQuartz_lo.mp3"></audio>
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
 
         loadSound('../sounds/Perc_MetronomeQuartz_hi.mp3', buffer => tickBuffer = buffer);
         loadSound('../sounds/Perc_MetronomeQuartz_lo.mp3', buffer => lowerTickBuffer = buffer);
@@ -73,10 +76,12 @@ window.onload = (event) => {
     }
 
     function playSound(buffer) {
-        const source = audioContext.createBufferSource();
-        source.buffer = buffer;
-        source.connect(audioContext.destination);
-        source.start(0);
+        if (audioContext && audioContext.state === 'running') {
+            const source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            source.connect(audioContext.destination);
+            source.start(0);
+        }
     }
 
 
@@ -115,6 +120,8 @@ window.onload = (event) => {
     }
 
     function toggleMetronome() {
+        initAudio();
+        
         if (isPlaying) {
             stopMetronome();
         } else {
