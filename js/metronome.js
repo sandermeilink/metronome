@@ -288,7 +288,7 @@ window.onload = (event) => {
     // Initialize the metronome
     setTimeSignature(4);
     updateBPM(120);
-/*
+
     function adjustContainerSize() {
         const container = document.querySelector('.container');
         const viewportHeight = window.innerHeight;
@@ -298,10 +298,14 @@ window.onload = (event) => {
         container.style.height = `${viewportHeight}px`;
 
         // Adjust width for smaller screens
-        if (viewportWidth > 500) {
-            container.style.width = '100%';
+        if (viewportWidth > 599) {
+            container.style.width = '600px';
+            container.style.height = 'inherit';
+            container.style.marginTop = 'inherit';
         } else {
             container.style.width = '400px';
+            container.style.height = '100%';
+            container.style.marginTop = '0px';
         }
 
         // Adjust font size based on viewport width
@@ -312,5 +316,4 @@ window.onload = (event) => {
     // Call on load and resize
     window.addEventListener('load', adjustContainerSize);
     window.addEventListener('resize', adjustContainerSize);
-*/
 };
