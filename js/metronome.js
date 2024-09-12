@@ -127,7 +127,7 @@ window.onload = (event) => {
 
     function startMetronome() {
         isPlaying = true;
-        toggleButton.textContent = '&#9724;';
+        toggleButton.innerHTML = '&#9724;';
 
         if (audioContext.state === 'suspended') {
             audioContext.resume();
