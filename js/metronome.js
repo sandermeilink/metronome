@@ -127,7 +127,7 @@ window.onload = (event) => {
 
     function startMetronome() {
         isPlaying = true;
-        toggleButton.textContent = '⏹';
+        toggleButton.textContent = '&#9724;';
 
         if (audioContext.state === 'suspended') {
             audioContext.resume();
@@ -146,7 +146,7 @@ window.onload = (event) => {
 
     function stopMetronome() {
         isPlaying = false;
-        toggleButton.textContent = '▶';
+        toggleButton.innerHTML = '&#9654;';
         clearInterval(intervalId);
         currentBeat = 0;
         blocks.forEach(block => block.classList.remove('active'));
