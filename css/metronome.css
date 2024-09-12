@@ -15,7 +15,7 @@
             border-radius: 5px;
             box-shadow: 0 0 0 1px rgba(20,20,20,0.5);
             background-image: url('../img/black_leather.png');
-            width: 500px;
+            width: 400px;
         }
         .padMe {
             padding: 20px;
@@ -194,10 +194,6 @@
             justify-content: space-between;
             margin-bottom: 10px;
         }
-        .timer {
-            font-size: 18px;
-            font-weight: normal;
-        }
 
         /* Updated styles for the slider */
         input[type="range"] {
@@ -288,12 +284,14 @@
         }
         #timers span {
             width: 100%;
+            font-size: 1.8em;
+            color: rgba(255, 255, 255, 0.5);
         }
         #timers div:nth-child(2) {
             display: none;
         }
         .timer-label {
             font-size: 0.8em;
-            color: rgba(255, 255, 255, 0.5);
-            margin-top: 5px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 1px;
         }

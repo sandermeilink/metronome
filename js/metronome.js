@@ -288,6 +288,29 @@ window.onload = (event) => {
     // Initialize the metronome
     setTimeSignature(4);
     updateBPM(120);
+/*
+    function adjustContainerSize() {
+        const container = document.querySelector('.container');
+        const viewportHeight = window.innerHeight;
+        const viewportWidth = window.innerWidth;
 
-    
+        // Adjust height
+        container.style.height = `${viewportHeight}px`;
+
+        // Adjust width for smaller screens
+        if (viewportWidth > 500) {
+            container.style.width = '100%';
+        } else {
+            container.style.width = '400px';
+        }
+
+        // Adjust font size based on viewport width
+        const baseFontSize = Math.min(16, Math.max(12, viewportWidth / 25));
+        document.documentElement.style.fontSize = `${baseFontSize}px`;
+    }
+
+    // Call on load and resize
+    window.addEventListener('load', adjustContainerSize);
+    window.addEventListener('resize', adjustContainerSize);
+*/
 };
