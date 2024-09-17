@@ -362,8 +362,4 @@ window.onload = (event) => {
             await requestWakeLock();
         }
     });
-    wakeLock.addEventListener('release', () => {
-        // The wake lock was released
-        console.log('Wake lock released');
-    });
 };
