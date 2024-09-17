@@ -48,6 +48,38 @@ window.onload = (event) => {
 
 
     /*=========
+    WakeLock - To prevent sleeping / time out while using the metronome
+    ================*/
+    let wakeLock = null;
+
+    if ('wakeLock' in navigator) {
+        // Wake Lock is supported
+    } else {
+        console.log('Wake Lock API not supported.');
+    }
+
+    async function requestWakeLock() {
+        try {
+            wakeLock = await navigator.wakeLock.request('screen');
+            console.log('Wake Lock is active');
+            wakeLock.addEventListener('release', () => {
+                console.log('Wake Lock was released');
+            });
+        } catch (err) {
+            console.error(`${err.name}, ${err.message}`);
+        }
+    }
+    function releaseWakeLock() {
+        if (wakeLock !== null) {
+            wakeLock.release()
+                .then(() => {
+                    wakeLock = null;
+                });
+        }
+    }
+
+
+    /*=========
     Web Audio API
     ================*/
     let audioContext;
@@ -142,6 +174,9 @@ window.onload = (event) => {
             resetCountdownTimer();
             startTotalTimer();
         }
+
+        // Request wake lock when metronome starts
+        requestWakeLock();
     }
 
     function stopMetronome() {
@@ -154,6 +189,9 @@ window.onload = (event) => {
         if (studyMode) {
             stopStudyMode();
         }
+
+        // Release wake lock when metronome stops
+        releaseWakeLock();
     }
 
     function startBeatInterval() {
@@ -316,4 +354,16 @@ window.onload = (event) => {
     // Call on load and resize
     window.addEventListener('load', adjustContainerSize);
     window.addEventListener('resize', adjustContainerSize);
+
+
+    // Automatic WakeLoc request in case of screen sleeping
+    document.addEventListener('visibilitychange', async () => {
+        if (wakeLock !== null && document.visibilityState === 'visible') {
+            await requestWakeLock();
+        }
+    });
+    wakeLock.addEventListener('release', () => {
+        // The wake lock was released
+        console.log('Wake lock released');
+    });
 };
