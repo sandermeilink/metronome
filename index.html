@@ -6,10 +6,10 @@
     <meta name="author" content="Sander Meilink">
     <meta name="version" content="202409171705">
 
-    <title>Mr. Metronome</title>
+    <title>Mr. Metronome v1.8</title>
     
-    <link rel="stylesheet" href="css/metronome.css?202409171705">
-    <script type="application/javascript" src="js/metronome.js?202409171705"></script>
+    <link rel="stylesheet" href="css/metronome.css?20240926">
+    <script type="application/javascript" src="js/metronome.js?20240926"></script>
 </head>
 <body>
     <div class="container">
@@ -47,9 +47,17 @@
             </div>
             <button id="studyButton">▼ Study</button>
         </div>
-        <div id="studyOptions">
+        <!--div id="studyOptions">
             Play <input type="number" id="bpmIncrement" value="5" min="1" max="20"> bpm faster every 
             <input type="number" id="incrementInterval" value="1" min="1" max="10"> minute(s)
+        </div-->
+        <div id="studyOptions" style="display: none;">
+            Play <input type="number" id="bpmIncrement" value="5" min="1" max="20"> bpm faster every
+            <div class="time-input">
+                <input type="number" id="incrementMinutes" value="1" min="0" max="59" step="1">
+                <span>:</span>
+                <input type="number" id="incrementSeconds" value="0" min="0" max="59" step="15">
+            </div>
         </div>
     </div>
 </body>

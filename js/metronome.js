@@ -14,7 +14,10 @@ window.onload = (event) => {
     const studyButton = document.getElementById('studyButton');
     const studyOptions = document.getElementById('studyOptions');
     const bpmIncrementInput = document.getElementById('bpmIncrement');
-    const incrementIntervalInput = document.getElementById('incrementInterval');
+    //const incrementIntervalInput = document.getElementById('incrementInterval');
+    const incrementMinutesInput = document.getElementById('incrementMinutes');
+    const incrementSecondsInput = document.getElementById('incrementSeconds');
+
     const studyTimers = document.getElementById('timers');
     const totalTimer = document.getElementById('totalTimer');
     const countdownTimer = document.getElementById('countdownTimer');
@@ -45,6 +48,7 @@ window.onload = (event) => {
         { name: "Presto", min: 140, max: 200 },
         { name: "Prestissimo", min: 188, max: Infinity }
     ];
+
 
 
     /*=========
@@ -237,7 +241,9 @@ window.onload = (event) => {
     }
 
     function startStudyMode() {
-        const incrementInterval = parseInt(incrementIntervalInput.value) * 60 * 1000; // Convert minutes to milliseconds
+        const incrementMinutes = parseInt(incrementMinutesInput.value) || 0;
+        const incrementSeconds = parseInt(incrementSecondsInput.value) || 0;
+        const incrementInterval = (incrementMinutes * 60 + incrementSeconds) * 1000; // Convert to milliseconds
         
         resetCountdownTimer();
         startTotalTimer();
@@ -252,10 +258,12 @@ window.onload = (event) => {
     function increaseBPM() {
         const bpmIncrement = parseInt(bpmIncrementInput.value);
         updateBPM(bpm + bpmIncrement);
-        const incrementInterval = parseInt(incrementIntervalInput.value) * 60 * 1000;
+        const incrementMinutes = parseInt(incrementMinutesInput.value) || 0;
+        const incrementSeconds = parseInt(incrementSecondsInput.value) || 0;
+        const incrementInterval = (incrementMinutes * 60 + incrementSeconds) * 1000;
         scheduleNextBpmIncrease(incrementInterval);
         resetCountdownTimer();
-        startBeatInterval();
+        //startBeatInterval();
     }
 
     function stopStudyMode() {
@@ -269,7 +277,9 @@ window.onload = (event) => {
     }
 
     function resetCountdownTimer() {
-        countdownTime = parseInt(incrementIntervalInput.value) * 60;
+        const incrementMinutes = parseInt(incrementMinutesInput.value) || 0;
+        const incrementSeconds = parseInt(incrementSecondsInput.value) || 0;
+        countdownTime = incrementMinutes * 60 + incrementSeconds;
         updateTimerDisplay(countdownTimer, countdownTime);
         clearInterval(countdownTimerId);
         countdownTimerId = setInterval(() => {
@@ -289,11 +299,110 @@ window.onload = (event) => {
         }, 1000);
     }
 
-    function updateTimerDisplay(timerElement, seconds) {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    function updateTimerDisplay(timerElement, timeInSeconds) {
+        const minutes = Math.floor(timeInSeconds / 60);
+        const seconds = timeInSeconds % 60;
+        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
+
+
+    /*=========
+    Study Time Spinners
+    ================*/
+    function padZero(num) {
+        return num.toString().padStart(2, '0');
+    }
+    function updateIncrementTime() {
+        let minutes = parseInt(incrementMinutesInput.value) || 0;
+        let seconds = parseInt(incrementSecondsInput.value) || 0;
+
+        // Adjust if seconds are 60 or more
+        if (seconds >= 60) {
+            minutes += Math.floor(seconds / 60);
+            seconds = seconds % 60;
+        }
+
+        // Ensure minutes don't exceed 59
+        minutes = Math.min(59, minutes);
+
+        incrementMinutesInput.value = padZero(minutes);
+        incrementSecondsInput.value = padZero(seconds);
+    }
+
+    incrementMinutesInput.addEventListener('change', function() {
+        enforceMinMax(this);
+        updateIncrementTime();
+    });
+
+    incrementSecondsInput.addEventListener('change', function() {
+        enforceMinMax(this);
+        updateIncrementTime();
+    });
+
+
+    // Custom spinners
+    function createSpinner(input, step) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'spinner-wrapper';
+        input.parentNode.insertBefore(wrapper, input);
+        wrapper.appendChild(input);
+
+        const up = document.createElement('button');
+        up.textContent = '▲';
+        up.className = 'spinner-up';
+        wrapper.appendChild(up);
+
+        const down = document.createElement('button');
+        down.textContent = '▼';
+        down.className = 'spinner-down';
+        wrapper.appendChild(down);
+
+        up.addEventListener('click', () => {
+            input.value = parseInt(input.value) + step;
+            input.dispatchEvent(new Event('change'));
+        });
+
+        down.addEventListener('click', () => {
+            input.value = parseInt(input.value) - step;
+            input.dispatchEvent(new Event('change'));
+        });
+    }
+
+    function enforceMinMax(input) {
+        const value = parseInt(input.value) || 0;
+        const min = parseInt(input.min);
+        const max = parseInt(input.max);
+        input.value = Math.max(min, Math.min(max, value));
+    }
+
+    createSpinner(incrementMinutesInput, 1);
+    createSpinner(incrementSecondsInput, 15);
+
+    // Prevent negative input on keydown
+    function preventNegativeInput(event) {
+        if (event.key === '-' || event.key === 'e') {
+            event.preventDefault();
+        }
+    }
+
+    incrementMinutesInput.addEventListener('keydown', preventNegativeInput);
+    incrementSecondsInput.addEventListener('keydown', preventNegativeInput);
+
+    // Ensure non-negative values on blur (when user leaves the input field)
+    incrementMinutesInput.addEventListener('blur', function() {
+        if (this.value === '' || parseInt(this.value) < 0) {
+            this.value = '00';
+        }
+        updateIncrementTime();
+    });
+
+    incrementSecondsInput.addEventListener('blur', function() {
+        if (this.value === '' || parseInt(this.value) < 0) {
+            this.value = '00';
+        }
+        updateIncrementTime();
+    });
+
 
     bpmSlider.addEventListener('input', (e) => updateBPM(parseInt(e.target.value)));
     minusButton.addEventListener('click', () => updateBPM(bpm - 1));
